@@ -4,7 +4,7 @@ Raylib bindings for the Jule programming language.
 > [!WARNING]
 > This has only been tested on windows so far so be aware. If you are on a different OS and want to help contributions are welcome
 
-## Get Started
+## Getting Started
 First make sure you have the latest version of Jule installed. 0.2.0 is the latest at the time of writing.
 Then create a new folder and create a Jule module via `julec mod init <module name>`
 Once you have that clone this repository
