@@ -1,0 +1,99 @@
+// Texture loading functions
+// NOTE: These functions require GPU access
+// RLAPI Texture2D LoadTexture(const char *fileName);                                                       // Load texture from file into GPU memory (VRAM)
+extern unsafe fn LoadTexture(fileName: *extern.char): Texture2D
+fn LoadTexture(fileName: str): Texture2D {
+	ret unsafe { extern.LoadTexture(strToCharPtr(fileName)) }
+}
+
+// RLAPI Texture2D LoadTextureFromImage(Image image);                                                       // Load texture from image data
+extern unsafe fn LoadTextureFromImage(image: Image): Texture2D
+fn LoadTextureFromImage(image: Image): Texture2D {
+	ret unsafe { extern.LoadTextureFromImage(image) }
+}
+
+// RLAPI TextureCubemap LoadTextureCubemap(Image image, int layout);                                        // Load cubemap from image, multiple image cubemap layouts supported
+extern unsafe fn LoadTextureCubemap(image: Image, layout: i32): TextureCubemap
+fn LoadTextureCubemap(image: Image, layout: i32): TextureCubemap {
+	ret unsafe { extern.LoadTextureCubemap(image, layout) }
+}
+
+// RLAPI RenderTexture2D LoadRenderTexture(int width, int height);                                          // Load texture for rendering (framebuffer)
+extern unsafe fn LoadRenderTexture(width: i32, height: i32): RenderTexture2D
+fn LoadRenderTexture(width: i32, height: i32): RenderTexture2D {
+	ret unsafe { extern.LoadRenderTexture(width, height) }
+}
+
+// RLAPI bool IsTextureValid(Texture2D texture);                                                            // Check if a texture is valid (loaded in GPU)
+extern unsafe fn IsTextureValid(texture: Texture2D): bool
+fn IsTextureValid(texture: Texture2D): bool {
+	ret unsafe { extern.IsTextureValid(texture) }
+}
+
+// RLAPI void UnloadTexture(Texture2D texture);                                                             // Unload texture from GPU memory (VRAM)
+extern unsafe fn UnloadTexture(texture: Texture2D)
+fn UnloadTexture(texture: Texture2D) {
+	unsafe { extern.UnloadTexture(texture) }
+}
+
+// RLAPI bool IsRenderTextureValid(RenderTexture2D target);                                                 // Check if a render texture is valid (loaded in GPU)
+extern unsafe fn IsRenderTextureValid(target: RenderTexture2D): bool
+fn IsRenderTextureValid(target: RenderTexture2D): bool {
+	ret unsafe { extern.IsRenderTextureValid(target) }
+}
+
+// RLAPI void UnloadRenderTexture(RenderTexture2D target);                                                  // Unload render texture from GPU memory (VRAM)
+extern unsafe fn UnloadRenderTexture(target: RenderTexture2D)
+fn UnloadRenderTexture(target: RenderTexture2D) {
+	unsafe { extern.UnloadRenderTexture(target) }
+}
+
+// RLAPI void UpdateTexture(Texture2D texture, const void *pixels);                                         // Update GPU texture with new data
+extern unsafe fn UpdateTexture(texture: Texture2D, pixels: extern.Void)
+fn UpdateTexture(texture: Texture2D, pixels: extern.Void) {
+	unsafe { extern.UpdateTexture(texture, pixels) }
+}
+
+// RLAPI void UpdateTextureRec(Texture2D texture, Rectangle rec, const void *pixels);                       // Update GPU texture rectangle with new data
+extern unsafe fn UpdateTextureRec(texture: Texture2D, rec: Rectangle, pixels: extern.Void)
+fn UpdateTextureRec(texture: Texture2D, rec: Rectangle, pixels: extern.Void) {
+	unsafe { extern.UpdateTextureRec(texture, rec, pixels) }
+}
+
+//********************************************************
+// Texture drawing functions
+// RLAPI void DrawTexture(Texture2D texture, int posX, int posY, Color tint);                               // Draw a Texture2D
+extern unsafe fn DrawTexture(texture: Texture2D, posX: int, posY: int, tint: Color)
+fn DrawTexture(texture: Texture2D, posX: int, posY: int, tint: Color) {
+	unsafe { extern.DrawTexture(texture, posX, posY, tint) }
+}
+
+// RLAPI void DrawTextureV(Texture2D texture, Vector2 position, Color tint);                                // Draw a Texture2D with position defined as Vector2
+extern unsafe fn DrawTextureV(texture: Texture2D, position: Vector2, tint: Color)
+fn DrawTextureV(texture: Texture2D, position: Vector2, tint: Color) {
+	unsafe { extern.DrawTextureV(texture, position, tint) }
+}
+
+// RLAPI void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float scale, Color tint);  // Draw a Texture2D with extended parameters
+extern unsafe fn DrawTextureEx(texture: Texture2D, position: Vector2, rotation: f32, scale: f32, tint: Color)
+fn DrawTextureEx(texture: Texture2D, position: Vector2, rotation: f32, scale: f32, tint: Color) {
+	unsafe { extern.DrawTextureEx(texture, position, rotation, scale, tint) }
+}
+
+// RLAPI void DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint);            // Draw a part of a texture defined by a rectangle
+extern unsafe fn DrawTextureRec(texture: Texture2D, source: Rectangle, position: Vector2, tint: Color)
+fn DrawTextureRec(texture: Texture2D, source: Rectangle, position: Vector2, tint: Color) {
+	unsafe { extern.DrawTextureRec(texture, source, position, tint) }
+}
+
+// RLAPI void DrawTexturePro(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, Color tint); // Draw a part of a texture defined by a rectangle with 'pro' parameters
+extern unsafe fn DrawTexturePro(texture: Texture2D, source: Rectangle, dest: Rectangle, origin: Vector2, rotation: f32, tint: Color)
+fn DrawTexturePro(texture: Texture2D, source: Rectangle, dest: Rectangle, origin: Vector2, rotation: f32, tint: Color) {
+	unsafe { extern.DrawTexturePro(texture, source, dest, origin, rotation, tint) }
+}
+
+// RLAPI void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dest, Vector2 origin, float rotation, Color tint); // Draws a texture (or part of it) that stretches or shrinks nicely
+extern unsafe fn DrawTextureNPatch(texture: Texture2D, nPatchInfo: NPatchInfo, dest: Rectangle, origin: Vector2, rotation: f32, tint: Color)
+fn DrawTextureNPatch(texture: Texture2D, nPatchInfo: NPatchInfo, dest: Rectangle, origin: Vector2, rotation: f32, tint: Color) {
+	unsafe { extern.DrawTextureNPatch(texture, nPatchInfo, dest, origin, rotation, tint) }
+}

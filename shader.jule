@@ -1,0 +1,63 @@
+// Shader management functions
+// NOTE: Shader functionality is not available on OpenGL 1.1
+// RLAPI Shader LoadShader(const char *vsFileName, const char *fsFileName);   // Load shader from files and bind default locations
+extern unsafe fn LoadShader(vsFileName: *extern.char, fsFileName: *extern.char): Shader
+fn LoadShader(vsFileName: str, fsFileName: str): Shader {
+	ret unsafe { extern.LoadShader(strToCharPtr(vsFileName), strToCharPtr(fsFileName)) }
+}
+
+// RLAPI Shader LoadShaderFromMemory(const char *vsCode, const char *fsCode); // Load shader from code strings and bind default locations
+extern unsafe fn LoadShaderFromMemory(vsCode: *extern.char, fsCode: *extern.char): Shader
+fn LoadShaderFromMemory(vsCode: str, fsCode: str): Shader {
+	ret unsafe { extern.LoadShaderFromMemory(strToCharPtr(vsCode), strToCharPtr(fsCode)) }
+}
+
+// RLAPI bool IsShaderValid(Shader shader);                                   // Check if a shader is valid (loaded on GPU)
+extern unsafe fn IsShaderValid(shader: Shader): bool
+fn IsShaderValid(shader: Shader): bool {
+	ret unsafe { extern.IsShaderValid(shader) }
+}
+
+// RLAPI int GetShaderLocation(Shader shader, const char *uniformName);       // Get shader uniform location
+extern unsafe fn GetShaderLocation(shader: Shader, uniformName: *extern.char): i32
+fn GetShaderLocation(shader: Shader, uniformName: str): i32 {
+	ret unsafe { extern.GetShaderLocation(shader, strToCharPtr(uniformName)) }
+}
+
+// RLAPI int GetShaderLocationAttrib(Shader shader, const char *attribName);  // Get shader attribute location
+extern unsafe fn GetShaderLocationAttrib(shader: Shader, attribName: *extern.char): i32
+fn GetShaderLocationAttrib(shader: Shader, attribName: str): i32 {
+	ret unsafe { extern.GetShaderLocationAttrib(shader, strToCharPtr(attribName)) }
+}
+
+//TODO: review later
+// RLAPI void SetShaderValue(Shader shader, int locIndex, const void *value, int uniformType);               // Set shader uniform value
+extern unsafe fn SetShaderValue(shader: Shader, locIndex: i32, value: extern.Void, uniformType: i32)
+fn SetShaderValue(shader: Shader, locIndex: i32, value: extern.Void, uniformType: i32) {
+	unsafe { extern.SetShaderValue(shader, locIndex, value, uniformType) }
+}
+
+//TODO: review later
+// RLAPI void SetShaderValueV(Shader shader, int locIndex, const void *value, int uniformType, int count);   // Set shader uniform value vector
+extern unsafe fn SetShaderValueV(shader: Shader, locIndex: i32, value: extern.Void, uniformType: i32, count: i32)
+fn SetShaderValueV(shader: Shader, locIndex: i32, value: extern.Void, uniformType: i32, count: i32) {
+	unsafe { extern.SetShaderValueV(shader, locIndex, value, uniformType, count) }
+}
+
+// RLAPI void SetShaderValueMatrix(Shader shader, int locIndex, Matrix mat);         // Set shader uniform value (matrix 4x4)
+extern unsafe fn SetShaderValueMatrix(shader: Shader, locIndex: i32, mat: Matrix)
+fn SetShaderValueMatrix(shader: Shader, locIndex: i32, mat: Matrix) {
+	unsafe { extern.SetShaderValueMatrix(shader, locIndex, mat) }
+}
+
+// RLAPI void SetShaderValueTexture(Shader shader, int locIndex, Texture2D texture); // Set shader uniform value for texture (sampler2d)
+extern unsafe fn SetShaderValueTexture(shader: Shader, locIndex: i32, texture: Texture2D)
+fn SetShaderValueTexture(shader: Shader, locIndex: i32, texture: Texture2D) {
+	unsafe { extern.SetShaderValueTexture(shader, locIndex, texture) }
+}
+
+// RLAPI void UnloadShader(Shader shader);
+extern unsafe fn UnloadShader(shader: Shader)
+fn UnloadShader(shader: Shader) {
+	unsafe { extern.UnloadShader(shader) }
+}

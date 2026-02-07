@@ -1,0 +1,38 @@
+// Cursor-related functions
+//********************************************************************
+
+//RLAPI void ShowCursor(void);                                      // Shows cursor
+extern unsafe fn ShowCursor()
+fn ShowCursor() {
+	unsafe { extern.ShowCursor() }
+}
+
+//RLAPI void HideCursor(void);                                      // Hides cursor
+extern unsafe fn HideCursor()
+fn HideCursor() {
+	unsafe { extern.HideCursor() }
+}
+
+//RLAPI bool IsCursorHidden(void);                                  // Check if cursor is not visible
+extern unsafe fn IsCursorHidden(): bool
+fn IsCursorHidden(): bool {
+	ret unsafe { extern.IsCursorHidden() }
+}
+
+//RLAPI void EnableCursor(void);                                    // Enables cursor (unlock cursor)
+extern unsafe fn EnableCursor()
+fn EnableCursor() {
+	unsafe { extern.EnableCursor() }
+}
+
+//RLAPI void DisableCursor(void);                                   // Disables cursor (lock cursor)
+extern unsafe fn DisableCursor()
+fn DisableCursor() {
+	unsafe { extern.DisableCursor() }
+}
+
+//RLAPI bool IsCursorOnScreen(void);                                // Check if cursor is on the screen
+extern unsafe fn IsCursorOnScreen(): bool
+fn IsCursorOnScreen(): bool {
+	ret unsafe { extern.IsCursorOnScreen() }
+}

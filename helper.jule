@@ -1,0 +1,158 @@
+// Random values generation functions
+// RLAPI void SetRandomSeed(unsigned int seed)                      // Set the seed for the random number generator
+extern unsafe fn SetRandomSeed(seed: u32)
+fn SetRandomSeed(seed: u32) {
+	unsafe { extern.SetRandomSeed(seed) }
+}
+
+// RLAPI int GetRandomValue(int min, int max)                       // Get a random value between min and max (both included)
+extern unsafe fn GetRandomValue(min: i32, max: i32)
+fn GetRandomValue(min: i32, max: i32) {
+	unsafe { extern.GetRandomValue(min, max) }
+}
+
+// RLAPI int *LoadRandomSequence(unsigned int count, int min, int max) // Load random values sequence, no values repeated
+extern unsafe fn LoadRandomSequence(count: u32, min: i32, max: i32): *i32
+fn LoadRandomSequence(count: u32, min: i32, max: i32): *i32 {
+	let arr = unsafe { extern.LoadRandomSequence(count, min, max) }
+	ret unsafe { &arr[0] }
+}
+
+// RLAPI void UnloadRandomSequence(int *sequence)                   // Unload random values sequence
+extern unsafe fn UnloadRandomSequence(sequence: *i32)
+fn UnloadRandomSequence(sequence: []i32) {
+	unsafe { extern.UnloadRandomSequence(&sequence[0]) }
+}
+
+// Misc. functions
+// RLAPI void TakeScreenshot(const char *fileName)                  // Takes a screenshot of current screen (filename extension defines format)
+extern unsafe fn TakeScreenshot(fileName: *extern.char)
+fn TakeScreenshot(fileName: str) {
+	unsafe { extern.TakeScreenshot(strToCharPtr(fileName)) }
+}
+
+// RLAPI void SetConfigFlags(unsigned int flags)                    // Setup init configuration flags (view FLAGS)
+extern unsafe fn SetConfigFlags(flags: u32)
+fn SetConfigFlags(flags: u32) {
+	unsafe { extern.SetConfigFlags(flags) }
+}
+
+// RLAPI void OpenURL(const char *url)                              // Open URL with default system browser (if available)
+extern unsafe fn OpenURL(url: *extern.char)
+fn OpenURL(url: str) {
+	unsafe { extern.OpenURL(strToCharPtr(url)) }
+}
+
+// NOTE: Following functions implemented in module [utils]
+//------------------------------------------------------------------
+// RLAPI void TraceLog(int logLevel, const char *text, ...)         // Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...)
+extern unsafe fn TraceLog(logLevel: i32, text: *extern.char, info: ...*extern.char)
+fn TraceLog(logLevel: i32, text: str, info: ...str) {
+	unsafe {
+		let mut arr = make([]*extern.char, 0, len(info))
+		for i in info {
+			arr = append(arr, strToCharPtr(info[i]))
+		}
+		extern.TraceLog(logLevel, strToCharPtr(text), arr...)
+	}
+}
+
+// RLAPI void SetTraceLogLevel(int logLevel)                        // Set the current threshold (minimum) log level
+extern unsafe fn SetTraceLogLevel(logLevel: i32)
+fn SetTraceLogLevel(logLevel: i32) {
+	unsafe { extern.SetTraceLogLevel(logLevel) }
+}
+
+// RLAPI void *MemAlloc(unsigned int size)                          // Internal memory allocator
+extern unsafe fn MemAlloc(size: u32)
+fn MemAlloc(size: u32) {
+	unsafe { extern.MemAlloc(size) }
+}
+
+// RLAPI void *MemRealloc(void *ptr, unsigned int size)             // Internal memory reallocator
+extern unsafe fn MemRealloc(ptr: *any, size: u32)
+fn MemRealloc(ptr: *any, size: u32) {
+	unsafe { extern.MemRealloc(ptr, size) }
+}
+
+// RLAPI void MemFree(void *ptr)                                    // Internal memory free
+extern unsafe fn MemFree(ptr: *any)
+fn MemFree(ptr: *any) {
+	unsafe { extern.MemFree(ptr) }
+}
+
+// Set custom callbacks
+// WARNING: Callbacks setup is intended for advanced users
+// RLAPI void SetTraceLogCallback(TraceLogCallback callback)         // Set custom trace log
+extern unsafe fn SetTraceLogCallback(callback: any)
+fn SetTraceLogCallback(callback: any) {
+	//todo
+}
+
+// RLAPI void SetLoadFileDataCallback(LoadFileDataCallback callback) // Set custom file binary data loader
+extern unsafe fn SetLoadFileDataCallback(callback: any)
+fn SetLoadFileDataCallback(callback: any) {
+	//todo
+}
+
+// RLAPI void SetSaveFileDataCallback(SaveFileDataCallback callback) // Set custom file binary data saver
+extern unsafe fn SetSaveFileDataCallback(callback: any)
+fn SetSaveFileDataCallback(callback: any) {
+	//todo
+}
+
+// RLAPI void SetLoadFileTextCallback(LoadFileTextCallback callback) // Set custom file text data loader
+extern unsafe fn SetLoadFileTextCallback(callback: any)
+fn SetLoadFileTextCallback(callback: any) {
+	//todo
+}
+
+// RLAPI void SetSaveFileTextCallback(SaveFileTextCallback callback) // Set custom file text data saver
+extern unsafe fn SetSaveFileTextCallback(callback: any)
+fn SetSaveFileTextCallback(callback: any) {
+	//todo
+}
+
+// Files management functions
+// RLAPI unsigned char *LoadFileData(const char *fileName, int *dataSize) // Load file data as byte array (read)
+extern unsafe fn LoadFileData(fileName: *extern.char, dataSize: *i32): *u8
+fn LoadFileData(fileName: *extern.char, dataSize: []i32): *u8 {
+	ret unsafe { extern.LoadFileData(fileName, &dataSize[0]) }
+}
+
+// RLAPI void UnloadFileData(unsigned char *data)                   // Unload file data allocated by LoadFileData()
+extern unsafe fn UnloadFileData(data: *u8)
+fn UnloadFileData(data: []u8) {
+	unsafe { extern.UnloadFileData(&data[0]) }
+}
+
+// RLAPI bool SaveFileData(const char *fileName, void *data, int dataSize) // Save data to file from byte array (write), returns true on success
+extern unsafe fn SaveFileData(fileName: *extern.char, data: *any, dataSize: i32): bool
+fn SaveFileData(fileName: str, data: *any, dataSize: i32): bool {
+	ret unsafe { extern.SaveFileData(strToCharPtr(fileName), &data[0], dataSize) }
+}
+
+// RLAPI bool ExportDataAsCode(const unsigned char *data, int dataSize, const char *fileName) // Export data to code (.h), returns true on success
+extern unsafe fn ExportDataAsCode(data: *u8, dataSize: i32, fileName: *extern.char): bool
+fn ExportDataAsCode(data: []u8, dataSize: i32, fileName: str): bool {
+	ret unsafe { extern.ExportDataAsCode(&data[0], dataSize, strToCharPtr(fileName)) }
+}
+
+// RLAPI char *LoadFileText(const char *fileName)                   // Load text data from file (read), returns a '\0' terminated string
+extern unsafe fn LoadFileText(fileName: *extern.char): *extern.char
+fn LoadFileText(fileName: *extern.char): str {
+	let s = unsafe { extern.LoadFileText(fileName) }
+	ret unsafe { ptrCharToStr(s) }
+}
+
+// RLAPI void UnloadFileText(char *text)                            // Unload file text data allocated by LoadFileText()
+extern unsafe fn UnloadFileText(text: *extern.char)
+fn UnloadFileText(text: str) {
+	unsafe { extern.UnloadFileText(strToCharPtr(text)) }
+}
+
+// RLAPI bool SaveFileText(const char *fileName, char *text)        // Save text data to file (write), string must be '\0' terminated, returns true on success
+extern unsafe fn SaveFileText(fileName: *extern.char, text: *extern.char): bool
+fn SaveFileText(fileName: str, text: str): bool {
+	ret unsafe { extern.SaveFileText(strToCharPtr(fileName), strToCharPtr(text)) }
+}

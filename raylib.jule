@@ -1,0 +1,42 @@
+extern use "rayjule/main.cpp"
+extern use "rayjule/main.hpp"
+
+unsafe fn strToCharPtr(s: str): *extern.char {
+	ret (*extern.char)(&s[0])
+}
+
+unsafe fn ptrCharToStr(c: *extern.char): str {
+	if c == nil {
+		ret ""
+	}
+	let mut s = ""
+	let mut i = 0
+	for int(c[i]) != 0; i++ {
+		s += str(c[i])
+	}
+	ret s
+}
+
+unsafe fn ptrU8ToBytes(raw: *u8): []byte {
+	if raw == nil {
+		ret nil
+	}
+	let mut data = make([]byte, 0, 1)
+	let mut i = 0
+	for int(raw[i]) != 0; i++ {
+		data = append(data, byte(raw[i]))
+	}
+	ret data
+}
+unsafe fn getLenCppChar(ch: *extern.char): int {
+	if ch == nil {
+		ret 0
+	}
+	let mut out: int = 0
+	let mut i = 0
+	for int(ch[i]) != 0; i++ {
+		out = i
+	}
+	ret out
+}
+

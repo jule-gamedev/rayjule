@@ -1,0 +1,7 @@
+
+// Set clip planes distances
+//void rlSetClipPlanes(double nearPlane, double farPlane)
+extern fn rlSetClipPlanes(near:f64 , far: f64)
+fn RlSetClipPlanes(near:f64 , far: f64){
+    unsafe { extern.rlSetClipPlanes(near,far)}
+}

@@ -1,0 +1,484 @@
+// Image loading functions
+// NOTE: These functions do not require GPU access
+//RLAPI Image LoadImage(const char *fileName);                                                             // Load image from file into CPU memory (RAM)
+extern unsafe fn LoadImage(path: *extern.char): Image
+fn LoadImage(path: str): Image {
+	ret unsafe { extern.LoadImage(strToCharPtr(path)) }
+}
+
+//RLAPI Image LoadImageRaw(const char *fileName, int width, int height, int format, int headerSize);       // Load image from RAW file data
+extern unsafe fn LoadImageRaw(fileName: *extern.char, width: i32, height: i32, format: i32, headerSize: i32): Image
+fn LoadImageRaw(fileName: str, width: i32, height: i32, format: i32, headerSize: i32): Image {
+	ret unsafe { extern.LoadImageRaw(strToCharPtr(fileName), width, height, format, headerSize) }
+}
+
+//RLAPI Image LoadImageAnim(const char *fileName, int *frames);                                            // Load image sequence from file (frames appended to image.data)
+extern unsafe fn LoadImageAnim(fileName: *extern.char, frames: *i32): Image
+fn LoadImageAnim(fileName: str, frames: *i32): Image {
+	ret unsafe { extern.LoadImageAnim(strToCharPtr(fileName), frames) }
+}
+
+//RLAPI Image LoadImageAnimFromMemory(const char *fileType, const unsigned char *fileData, int dataSize, int *frames); // Load image sequence from memory buffer
+extern unsafe fn LoadImageAnimFromMemory(fileType: *extern.char, fileData: *byte, dataSize: i32, frames: *i32): Image
+fn LoadImageAnimFromMemory(fileType: str, fileData: []byte, dataSize: i32, frames: []i32): Image {
+	ret unsafe { extern.LoadImageAnimFromMemory(strToCharPtr(fileType), &fileData[0], dataSize, &frames[0]) }
+}
+
+//RLAPI Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, int dataSize);      // Load image from memory buffer, fileType refers to extension: i.e. '.png'
+extern unsafe fn LoadImageFromMemory(fileType: *extern.char, fileData: *byte, dataSize: i32): Image
+fn LoadImageFromMemory(fileType: str, fileData: []byte, dataSize: i32): Image {
+	ret unsafe { extern.LoadImageFromMemory(strToCharPtr(fileType), &fileData[0], dataSize) }
+}
+
+//RLAPI Image LoadImageFromTexture(Texture2D texture);                                                     // Load image from GPU texture data
+extern unsafe fn LoadImageFromTexture(texture: Texture2D): Image
+fn LoadImageFromTexture(texture: Texture2D): Image {
+	ret unsafe { extern.LoadImageFromTexture(texture) }
+}
+
+//RLAPI Image LoadImageFromScreen(void);                                                                   // Load image from screen buffer and (screenshot)
+extern unsafe fn LoadImageFromScreen(): Image
+fn LoadImageFromScreen(): Image {
+	ret unsafe { extern.LoadImageFromScreen() }
+}
+
+//RLAPI bool IsImageValid(Image image);                                                                    // Check if an image is valid (data and parameters)
+extern unsafe fn IsImageValid(image: Image): bool
+fn IsImageValid(image: Image): bool {
+	ret unsafe { extern.IsImageValid(image) }
+}
+
+//RLAPI void UnloadImage(Image image);                                                                     // Unload image from CPU memory (RAM)
+extern unsafe fn UnloadImage(image: Image)
+fn UnloadImage(image: Image) {
+	unsafe { extern.UnloadImage(image) }
+}
+
+//RLAPI bool ExportImage(Image image, const char *fileName);                                               // Export image data to file, returns true on success
+extern unsafe fn ExportImage(image: Image, fileName: *extern.char): bool
+fn ExportImage(image: Image, fileName: str): bool {
+	ret unsafe { extern.ExportImage(image, strToCharPtr(fileName)) }
+}
+
+//RLAPI unsigned char *ExportImageToMemory(Image image, const char *fileType, int *fileSize);              // Export image to memory buffer
+extern unsafe fn ExportImageToMemory(image: Image, fileType: *extern.char, fileSize: *i32): *u8
+fn ExportImageToMemory(image: Image, fileType: *extern.char, fileSize: []i32): []byte {
+	let raw = unsafe { extern.ExportImageToMemory(image, fileType, &fileSize[0]) }
+	ret unsafe { ptrU8ToBytes(raw) }
+}
+
+//RLAPI bool ExportImageAsCode(Image image, const char *fileName);            // Export image as code file defining an array of bytes, returns true on success
+extern unsafe fn ExportImageAsCode(image: Image, fileName: *extern.char): bool
+fn ExportImageAsCode(image: Image, fileName: *extern.char): bool {
+	ret unsafe { extern.ExportImageAsCode(image, fileName) }
+}
+
+//************************************************************************************
+// Image generation functions
+// RLAPI Image GenImageColor(int width, int height, Color color);                                           // Generate image: plain color
+extern unsafe fn GenImageColor(width: i32, height: i32, color: Color): Image
+fn GenImageColor(width: i32, height: i32, color: Color): Image {
+	ret unsafe { extern.GenImageColor(width, height, color) }
+}
+
+// RLAPI Image GenImageGradientLinear(int width, int height, int direction, Color start, Color end);        // Generate image: linear gradient, direction in degrees [0..360], 0=Vertical gradient
+extern unsafe fn GenImageGradientLinear(width: i32, height: i32, direction: i32, start: Color, end: Color): Image
+fn GenImageGradientLinear(width: i32, height: i32, direction: i32, start: Color, end: Color): Image {
+	ret unsafe { extern.GenImageGradientLinear(width, height, direction, start, end) }
+}
+
+// RLAPI Image GenImageGradientRadial(int width, int height, float density, Color inner, Color outer);      // Generate image: radial gradient
+extern unsafe fn GenImageGradientRadial(width: i32, height: i32, density: f32, inner: Color, outer: Color): Image
+fn GenImageGradientRadial(width: i32, height: i32, density: f32, inner: Color, outer: Color): Image {
+	ret unsafe { extern.GenImageGradientRadial(width, height, density, inner, outer) }
+}
+
+// RLAPI Image GenImageGradientSquare(int width, int height, float density, Color inner, Color outer);      // Generate image: square gradient
+extern unsafe fn GenImageGradientSquare(width: i32, height: i32, density: f32, inner: Color, outer: Color): Image
+fn GenImageGradientSquare(width: i32, height: i32, density: f32, inner: Color, outer: Color): Image {
+	ret unsafe { extern.GenImageGradientSquare(width, height, density, inner, outer) }
+}
+
+// RLAPI Image GenImageChecked(int width, int height, int checksX, int checksY, Color col1, Color col2);    // Generate image: checked
+extern unsafe fn GenImageChecked(width: i32, height: i32, checksX: i32, checksY: i32, col1: Color, col2: Color): Image
+fn GenImageChecked(width: i32, height: i32, checksX: i32, checksY: i32, col1: Color, col2: Color): Image {
+	ret unsafe { extern.GenImageChecked(width, height, checksX, checksY, col1, col2) }
+}
+
+// RLAPI Image GenImageWhiteNoise(int width, int height, float factor);                                     // Generate image: white noise
+extern unsafe fn GenImageWhiteNoise(width: i32, height: i32, factor: f32): Image
+fn GenImageWhiteNoise(width: i32, height: i32, factor: f32): Image {
+	ret unsafe { extern.GenImageWhiteNoise(width, height, factor) }
+}
+
+// RLAPI Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float scale);           // Generate image: perlin noise
+extern unsafe fn GenImagePerlinNoise(width: i32, height: i32, offsetX: i32, offsetY: i32, scale: f32): Image
+fn GenImagePerlinNoise(width: i32, height: i32, offsetX: i32, offsetY: i32, scale: f32): Image {
+	ret unsafe { extern.GenImagePerlinNoise(width, height, offsetX, offsetY, scale) }
+}
+
+// RLAPI Image GenImageCellular(int width, int height, int tileSize);                                       // Generate image: cellular algorithm, bigger tileSize means bigger cells
+extern unsafe fn GenImageCellular(width: i32, height: i32, tileSize: i32): Image
+fn GenImageCellular(width: i32, height: i32, tileSize: i32): Image {
+	ret unsafe { extern.GenImageCellular(width, height, tileSize) }
+}
+
+// RLAPI Image GenImageText(int width, int height, const char *text);                                       // Generate image: grayscale image from text data
+extern unsafe fn GenImageText(width: i32, height: i32, text: *extern.char): Image
+fn GenImageText(width: i32, height: i32, text: str): Image {
+	ret unsafe { extern.GenImageText(width, height, strToCharPtr(text)) }
+}
+
+//***********************************************************************************
+// Image manipulation functions
+// RLAPI Image ImageCopy(Image image);                                                                      // Create an image duplicate (useful for transformations)
+extern unsafe fn ImageCopy(image: Image): Image
+fn ImageCopy(image: Image): Image {
+	ret unsafe { extern.ImageCopy(image) }
+}
+
+// I Image ImageFromImage(Image image, Rectangle rec);                                                  // Create an image from another image piece
+extern unsafe fn ImageFromImage(image: Image, rec: Rectangle): Image
+fn ImageFromImage(image: Image, rec: Rectangle): Image {
+	ret unsafe { extern.ImageFromImage(image, rec) }
+}
+
+// RLAPI Image ImageFromChannel(Image image, int selectedChannel);                                          // Create an image from a selected channel of another image (GRAYSCALE)
+extern unsafe fn ImageFromChannel(image: Image, selectedChannel: i32): Image
+fn ImageFromChannel(image: Image, selectedChannel: i32): Image {
+	ret unsafe { extern.ImageFromChannel(image, selectedChannel) }
+}
+
+// RLAPI Image ImageText(const char *text, int fontSize, Color color);                                      // Create an image from text (default font)
+extern unsafe fn ImageText(text: *extern.char, fontSize: i32, color: Color): Image
+fn ImageText(text: str, fontSize: i32, color: Color): Image {
+	ret unsafe { extern.ImageText(strToCharPtr(text), fontSize, color) }
+}
+
+// RLAPI Image ImageTextEx(Font font, const char *text, float fontSize, float spacing, Color tint);         // Create an image from text (custom sprite font)
+extern unsafe fn ImageTextEx(font: Font, text: *extern.char, fontSize: f32, spacing: f32, tint: Color): Image
+fn ImageTextEx(font: Font, text: str, fontSize: f32, spacing: f32, tint: Color): Image {
+	ret unsafe { extern.ImageTextEx(font, strToCharPtr(text), fontSize, spacing, tint) }
+}
+
+// RLAPI void ImageFormat(Image *image, int newFormat);                                                     // Convert image data to desired format
+extern unsafe fn ImageFormat(image: *Image, newFormat: i32)
+fn ImageFormat(image: *Image, newFormat: i32) {
+	unsafe { extern.ImageFormat(image, newFormat) }
+}
+
+// RLAPI void ImageToPOT(Image *image, Color fill);                                                         // Convert image to POT (power-of-two)
+extern unsafe fn ImageToPOT(image: *Image, fill: Color)
+fn ImageToPOT(image: *Image, fill: Color) {
+	unsafe { extern.ImageToPOT(image, fill) }
+}
+
+// RLAPI void ImageCrop(Image *image, Rectangle crop);                                                      // Crop an image to a defined rectangle
+extern unsafe fn ImageCrop(image: *Image, crop: Rectangle)
+fn ImageCrop(image: *Image, crop: Rectangle) {
+	unsafe { extern.ImageCrop(image, crop) }
+}
+
+// RLAPI void ImageAlphaCrop(Image *image, float threshold);                                                // Crop image depending on alpha value
+extern unsafe fn ImageAlphaCrop(image: *Image, threshold: f32)
+fn ImageAlphaCrop(image: *Image, threshold: f32) {
+	unsafe { extern.ImageAlphaCrop(image, threshold) }
+}
+
+// RLAPI void ImageAlphaClear(Image *image, Color color, float threshold);                                  // Clear alpha channel to desired color
+extern unsafe fn ImageAlphaClear(image: *Image, color: Color, threshold: f32)
+fn ImageAlphaClear(image: *Image, color: Color, threshold: f32) {
+	unsafe { extern.ImageAlphaClear(image, color, threshold) }
+}
+
+// RLAPI void ImageAlphaMask(Image *image, Image alphaMask);                                                // Apply alpha mask to image
+extern unsafe fn ImageAlphaMask(image: *Image, alphaMask: Image)
+fn ImageAlphaMask(image: *Image, alphaMask: Image) {
+	unsafe { extern.ImageAlphaMask(image, alphaMask) }
+}
+
+// RLAPI void ImageAlphaPremultiply(Image *image);                                                          // Premultiply alpha channel
+extern unsafe fn ImageAlphaPremultiply(image: *Image)
+fn ImageAlphaPremultiply(image: *Image) {
+	unsafe { extern.ImageAlphaPremultiply(image) }
+}
+
+// RLAPI void ImageBlurGaussian(Image *image, int blurSize);                                                // Apply Gaussian blur using a box blur approximation
+extern unsafe fn ImageBlurGaussian(image: *Image, blurSize: i32)
+fn ImageBlurGaussian(image: *Image, blurSize: i32) {
+	unsafe { extern.ImageBlurGaussian(image, blurSize) }
+}
+
+// RLAPI void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize);                    // Apply custom square convolution kernel to image
+extern unsafe fn ImageKernelConvolution(image: *Image, kernel: *f32, kernelSize: i32)
+fn ImageKernelConvolution(image: *Image, kernel: *f32, kernelSize: i32) {
+	unsafe { extern.ImageKernelConvolution(image, kernel, kernelSize) }
+}
+
+// RLAPI void ImageResize(Image *image, int newWidth, int newHeight);                                       // Resize image (Bicubic scaling algorithm)
+extern unsafe fn ImageResize(image: *Image, newWidth: i32, newHeight: i32)
+fn ImageResize(image: *Image, newWidth: i32, newHeight: i32) {
+	unsafe { extern.ImageResize(image, newWidth, newHeight) }
+}
+
+// RLAPI void ImageResizeNN(Image *image, int newWidth,int newHeight);                                      // Resize image (Nearest-Neighbor scaling algorithm)
+extern unsafe fn ImageResizeNN(image: *Image, newWidth: i32, newHeight: i32)
+fn ImageResizeNN(image: *Image, newWidth: i32, newHeight: i32) {
+	unsafe { extern.ImageResizeNN(image, newWidth, newHeight) }
+}
+
+// RLAPI void ImageResizeCanvas(Image *image, int newWidth, int newHeight, int offsetX, int offsetY, Color fill); // Resize canvas and fill with color
+extern unsafe fn ImageResizeCanvas(image: *Image, newWidth: i32, newHeight: i32, offsetX: i32, offsetY: i32, fill: Color)
+fn ImageResizeCanvas(image: *Image, newWidth: i32, newHeight: i32, offsetX: i32, offsetY: i32, fill: Color) {
+	unsafe { extern.ImageResizeCanvas(image, newWidth, newHeight, offsetX, offsetY, fill) }
+}
+
+// RLAPI void ImageMipmaps(Image *image);                                                                   // Compute all mipmap levels for a provided image
+extern unsafe fn ImageMipmaps(image: *Image)
+fn ImageMipmaps(image: *Image) {
+	unsafe { extern.ImageMipmaps(image) }
+}
+
+// RLAPI void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp);                            // Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
+extern unsafe fn ImageDither(image: *Image, rBpp: i32, gBpp: i32, bBpp: i32, aBpp: i32)
+fn ImageDither(image: *Image, rBpp: i32, gBpp: i32, bBpp: i32, aBpp: i32) {
+	unsafe { extern.ImageDither(image, rBpp, gBpp, bBpp, aBpp) }
+}
+
+// RLAPI void ImageFlipVertical(Image *image);                                                              // Flip image vertically
+extern unsafe fn ImageFlipVertical(image: *Image)
+fn ImageFlipVertical(image: *Image) {
+	unsafe { extern.ImageFlipVertical(image) }
+}
+
+// RLAPI void ImageFlipHorizontal(Image *image);                                                            // Flip image horizontally
+extern unsafe fn ImageFlipHorizontal(image: *Image)
+fn ImageFlipHorizontal(image: *Image) {
+	unsafe { extern.ImageFlipHorizontal(image) }
+}
+
+// RLAPI void ImageRotate(Image *image, int degrees);                                                       // Rotate image by input angle in degrees (-359 to 359)
+extern unsafe fn ImageRotate(image: *Image, degrees: i32)
+fn ImageRotate(image: *Image, degrees: i32) {
+	unsafe { extern.ImageRotate(image, degrees) }
+}
+
+// RLAPI void ImageRotateCW(Image *image);                                                                  // Rotate image clockwise 90deg
+extern unsafe fn ImageRotateCW(image: *Image)
+fn ImageRotateCW(image: *Image) {
+	unsafe { extern.ImageRotateCW(image) }
+}
+
+// RLAPI void ImageRotateCCW(Image *image);                                                                 // Rotate image counter-clockwise 90deg
+extern unsafe fn ImageRotateCCW(image: *Image)
+fn ImageRotateCCW(image: *Image) {
+	unsafe { extern.ImageRotateCCW(image) }
+}
+
+// RLAPI void ImageColorTint(Image *image, Color color);                                                    // Modify image color: tint
+extern unsafe fn ImageColorTint(image: *Image, color: Color)
+fn ImageColorTint(image: *Image, color: Color) {
+	unsafe { extern.ImageColorTint(image, color) }
+}
+
+// RLAPI void ImageColorInvert(Image *image);                                                               // Modify image color: invert
+extern unsafe fn ImageColorInvert(image: *Image)
+fn ImageColorInvert(image: *Image) {
+	unsafe { extern.ImageColorInvert(image) }
+}
+
+// RLAPI void ImageColorGrayscale(Image *image);                                                            // Modify image color: grayscale
+extern unsafe fn ImageColorGrayscale(image: *Image)
+fn ImageColorGrayscale(image: *Image) {
+	unsafe { extern.ImageColorGrayscale(image) }
+}
+
+// RLAPI void ImageColorContrast(Image *image, float contrast);                                             // Modify image color: contrast (-100 to 100)
+extern unsafe fn ImageColorContrast(image: *Image, contrast: f32)
+fn ImageColorContrast(image: *Image, contrast: f32) {
+	unsafe { extern.ImageColorContrast(image, contrast) }
+}
+
+// RLAPI void ImageColorBrightness(Image *image, int brightness);                                           // Modify image color: brightness (-255 to 255)
+extern unsafe fn ImageColorBrightness(image: *Image, brightness: i32)
+fn ImageColorBrightness(image: *Image, brightness: i32) {
+	unsafe { extern.ImageColorBrightness(image, brightness) }
+}
+
+// RLAPI void ImageColorReplace(Image *image, Color color, Color replace);                                  // Modify image color: replace color
+extern unsafe fn ImageColorReplace(image: *Image, color: Color, replace: Color)
+fn ImageColorReplace(image: *Image, color: Color, replace: Color) {
+	unsafe { extern.ImageColorReplace(image, color, replace) }
+}
+
+// RLAPI Color *LoadImageColors(Image image);                                                               // Load color data from image as a Color array (RGBA - 32bit)
+extern unsafe fn LoadImageColors(image: Image): *Color
+fn LoadImageColors(image: Image): *Color {
+	ret unsafe { extern.LoadImageColors(image) }
+}
+
+// RLAPI Color *LoadImagePalette(Image image, int maxPaletteSize, int *colorCount);                         // Load colors palette from image as a Color array (RGBA - 32bit)
+extern unsafe fn LoadImagePalette(image: Image, maxPaletteSize: i32, colorCount: *i32): *Color
+fn LoadImagePalette(image: Image, maxPaletteSize: i32, colorCount: *i32): *Color {
+	ret unsafe { extern.LoadImagePalette(image, maxPaletteSize, colorCount) }
+}
+
+// RLAPI void UnloadImageColors(Color *colors);                                                             // Unload color data loaded with LoadImageColors()
+extern unsafe fn UnloadImageColors(colors: *Color)
+fn UnloadImageColors(colors: *Color) {
+	unsafe { extern.UnloadImageColors(colors) }
+}
+
+// RLAPI void UnloadImagePalette(Color *colors);                                                            // Unload colors palette loaded with LoadImagePalette()
+extern unsafe fn UnloadImagePalette(colors: *Color)
+fn UnloadImagePalette(colors: *Color) {
+	unsafe { extern.UnloadImagePalette(colors) }
+}
+
+// RLAPI Rectangle GetImageAlphaBorder(Image image, float threshold);                                       // Get image alpha border rectangle
+extern unsafe fn GetImageAlphaBorder(image: Image, threshold: f32): Rectangle
+fn GetImageAlphaBorder(image: Image, threshold: f32): Rectangle {
+	ret unsafe { extern.GetImageAlphaBorder(image, threshold) }
+}
+
+// RLAPI Color GetImageColor(Image image, int x, int y);                                                    // Get image pixel color at (x, y) position
+extern unsafe fn GetImageColor(image: Image, x: i32, y: i32): Color
+fn GetImageColor(image: Image, x: i32, y: i32): Color {
+	ret unsafe { extern.GetImageColor(image, x, y) }
+}
+
+//**********************************************************************************
+// Image drawing functions
+// NOTE: Image software-rendering functions (CPU)
+// RLAPI void ImageClearBackground(Image *dst, Color color);                                                // Clear image background with given color
+extern unsafe fn ImageClearBackground(dst: *Image, color: Color)
+fn ImageClearBackground(dst: *Image, color: Color) {
+	unsafe { extern.ImageClearBackground(dst, color) }
+}
+
+// RLAPI void ImageDrawPixel(Image *dst, int posX, int posY, Color color);                                  // Draw pixel within an image
+extern unsafe fn ImageDrawPixel(dst: *Image, posX: i32, posY: i32, color: Color)
+fn ImageDrawPixel(dst: *Image, posX: i32, posY: i32, color: Color) {
+	unsafe { extern.ImageDrawPixel(dst, posX, posY, color) }
+}
+
+// RLAPI void ImageDrawPixelV(Image *dst, Vector2 position, Color color);                                   // Draw pixel within an image (Vector version)
+extern unsafe fn ImageDrawPixelV(dst: *Image, position: Vector2, color: Color)
+fn ImageDrawPixelV(dst: *Image, position: Vector2, color: Color) {
+	unsafe { extern.ImageDrawPixelV(dst, position, color) }
+}
+
+// RLAPI void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int endPosY, Color color); // Draw line within an image
+extern unsafe fn ImageDrawLine(dst: *Image, startPosX: i32, startPosY: i32, endPosX: i32, endPosY: i32, color: Color)
+fn ImageDrawLine(dst: *Image, startPosX: i32, startPosY: i32, endPosX: i32, endPosY: i32, color: Color) {
+	unsafe { extern.ImageDrawLine(dst, startPosX, startPosY, endPosX, endPosY, color) }
+}
+
+// RLAPI void ImageDrawLineV(Image *dst, Vector2 start, Vector2 end, Color color);                          // Draw line within an image (Vector version)
+extern unsafe fn ImageDrawLineV(dst: *Image, start: Vector2, end: Vector2, color: Color)
+fn ImageDrawLineV(dst: *Image, start: Vector2, end: Vector2, color: Color) {
+	unsafe { extern.ImageDrawLineV(dst, start, end, color) }
+}
+
+// RLAPI void ImageDrawLineEx(Image *dst, Vector2 start, Vector2 end, int thick, Color color);              // Draw a line defining thickness within an image
+extern unsafe fn ImageDrawLineEx(dst: *Image, start: Vector2, end: Vector2, thick: i32, color: Color)
+fn ImageDrawLineEx(dst: *Image, start: Vector2, end: Vector2, thick: i32, color: Color) {
+	unsafe { extern.ImageDrawLineEx(dst, start, end, thick, color) }
+}
+
+// RLAPI void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color color);               // Draw a filled circle within an image
+extern unsafe fn ImageDrawCircle(dst: *Image, centerX: i32, centerY: i32, radius: i32, color: Color)
+fn ImageDrawCircle(dst: *Image, centerX: i32, centerY: i32, radius: i32, color: Color) {
+	unsafe { extern.ImageDrawCircle(dst, centerX, centerY, radius, color) }
+}
+
+// RLAPI void ImageDrawCircleV(Image *dst, Vector2 center, int radius, Color color);                        // Draw a filled circle within an image (Vector version)
+extern unsafe fn ImageDrawCircleV(dst: *Image, center: Vector2, radius: i32, color: Color)
+fn ImageDrawCircleV(dst: *Image, center: Vector2, radius: i32, color: Color) {
+	unsafe { extern.ImageDrawCircleV(dst, center, radius, color) }
+}
+
+// RLAPI void ImageDrawCircleLines(Image *dst, int centerX, int centerY, int radius, Color color);          // Draw circle outline within an image
+extern unsafe fn ImageDrawCircleLines(dst: *Image, centerX: i32, centerY: i32, radius: i32, color: Color)
+fn ImageDrawCircleLines(dst: *Image, centerX: i32, centerY: i32, radius: i32, color: Color) {
+	unsafe { extern.ImageDrawCircleLines(dst, centerX, centerY, radius, color) }
+}
+
+// RLAPI void ImageDrawCircleLinesV(Image *dst, Vector2 center, int radius, Color color);                   // Draw circle outline within an image (Vector version)
+extern unsafe fn ImageDrawCircleLinesV(dst: *Image, center: Vector2, radius: i32, color: Color)
+fn ImageDrawCircleLinesV(dst: *Image, center: Vector2, radius: i32, color: Color) {
+	unsafe { extern.ImageDrawCircleLinesV(dst, center, radius, color) }
+}
+
+//************
+// RLAPI void ImageDrawRectangle(Image *dst, int posX, int posY, int width, int height, Color color);       // Draw rectangle within an image
+extern unsafe fn ImageDrawRectangle(dst: *Image, posX: i32, posY: i32, width: i32, height: i32, color: Color)
+fn ImageDrawRectangle(dst: *Image, posX: i32, posY: i32, width: i32, height: i32, color: Color) {
+	unsafe { extern.ImageDrawRectangle(dst, posX, posY, width, height, color) }
+}
+
+// RLAPI void ImageDrawRectangleV(Image *dst, Vector2 position, Vector2 size, Color color);                 // Draw rectangle within an image (Vector version)
+extern unsafe fn ImageDrawRectangleV(dst: *Image, position: Vector2, size: Vector2, color: Color)
+fn ImageDrawRectangleV(dst: *Image, position: Vector2, size: Vector2, color: Color) {
+	unsafe { extern.ImageDrawRectangleV(dst, position, size, color) }
+}
+
+// RLAPI void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color);                                // Draw rectangle within an image
+extern unsafe fn ImageDrawRectangleRec(dst: *Image, rec: Rectangle, color: Color)
+fn ImageDrawRectangleRec(dst: *Image, rec: Rectangle, color: Color) {
+	unsafe { extern.ImageDrawRectangleRec(dst, rec, color) }
+}
+
+// RLAPI void ImageDrawRectangleLines(Image *dst, Rectangle rec, int thick, Color color);                   // Draw rectangle lines within an image
+extern unsafe fn ImageDrawRectangleLines(dst: *Image, rec: Rectangle, thick: i32, color: Color)
+fn ImageDrawRectangleLines(dst: *Image, rec: Rectangle, thick: i32, color: Color) {
+	unsafe { extern.ImageDrawRectangleLines(dst, rec, thick, color) }
+}
+
+// RLAPI void ImageDrawTriangle(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color color);               // Draw triangle within an image
+extern unsafe fn ImageDrawTriangle(dst: *Image, v1: Vector2, v2: Vector2, v3: Vector2, color: Color)
+fn ImageDrawTriangle(dst: *Image, v1: Vector2, v2: Vector2, v3: Vector2, color: Color) {
+	unsafe { extern.ImageDrawTriangle(dst, v1, v2, v3, color) }
+}
+
+// RLAPI void ImageDrawTriangleEx(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color c1, Color c2, Color c3); // Draw triangle with interpolated colors within an image
+extern unsafe fn ImageDrawTriangleEx(dst: *Image, v1: Vector2, v2: Vector2, v3: Vector2, c1: Color, c2: Color, c3: Color)
+fn ImageDrawTriangleEx(dst: *Image, v1: Vector2, v2: Vector2, v3: Vector2, c1: Color, c2: Color, c3: Color) {
+	unsafe { extern.ImageDrawTriangleEx(dst, v1, v2, v3, c1, c2, c3) }
+}
+
+// RLAPI void ImageDrawTriangleLines(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color color);          // Draw triangle outline within an image
+extern unsafe fn ImageDrawTriangleLines(dst: *Image, v1: Vector2, v2: Vector2, v3: Vector2, color: Color)
+fn ImageDrawTriangleLines(dst: *Image, v1: Vector2, v2: Vector2, v3: Vector2, color: Color) {
+	unsafe { extern.ImageDrawTriangleLines(dst, v1, v2, v3, color) }
+}
+
+// RLAPI void ImageDrawTriangleFan(Image *dst, Vector2 *points, int pointCount, Color color);               // Draw a triangle fan defined by points within an image (first vertex is the center)
+extern unsafe fn ImageDrawTriangleFan(dst: *Image, points: *Vector2, pointCount: i32, color: Color)
+fn ImageDrawTriangleFan(dst: *Image, points: []Vector2, pointCount: i32, color: Color) {
+	unsafe { extern.ImageDrawTriangleFan(dst, &points[0], pointCount, color) }
+}
+
+// RLAPI void ImageDrawTriangleStrip(Image *dst, Vector2 *points, int pointCount, Color color);             // Draw a triangle strip defined by points within an image
+extern unsafe fn ImageDrawTriangleStrip(dst: *Image, points: *Vector2, pointCount: i32, color: Color)
+fn ImageDrawTriangleStrip(dst: *Image, points: []Vector2, pointCount: i32, color: Color) {
+	unsafe { extern.ImageDrawTriangleStrip(dst, &points[0], pointCount, color) }
+}
+
+// RLAPI void ImageDraw(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint);             // Draw a source image within a destination image (tint applied to source)
+extern unsafe fn ImageDraw(dst: *Image, src: Image, srcRec: Rectangle, dstRec: Rectangle, tint: Color)
+fn ImageDraw(dst: *Image, src: Image, srcRec: Rectangle, dstRec: Rectangle, tint: Color) {
+	unsafe { extern.ImageDraw(dst, src, srcRec, dstRec, tint) }
+}
+
+// RLAPI void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSize, Color color);   // Draw text (using default font) within an image (destination)
+extern unsafe fn ImageDrawText(dst: *Image, text: *extern.char, posX: i32, posY: i32, fontSize: i32, color: Color)
+fn ImageDrawText(dst: *Image, text: str, posX: i32, posY: i32, fontSize: i32, color: Color) {
+	unsafe { extern.ImageDrawText(dst, strToCharPtr(text), posX, posY, fontSize, color) }
+}
+
+// RLAPI void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text (custom sprite font) within an image (destination)
+extern unsafe fn ImageDrawTextEx(dst: *Image, font: Font, text: *extern.char, position: Vector2, fontSize: f32, spacing: f32, tint: Color)
+fn ImageDrawTextEx(dst: *Image, font: Font, text: str, position: Vector2, fontSize: f32, spacing: f32, tint: Color) {
+	unsafe { extern.ImageDrawTextEx(dst, font, strToCharPtr(text), position, fontSize, spacing, tint) }
+}

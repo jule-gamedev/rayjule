@@ -1,0 +1,417 @@
+use "std/jule"
+
+extern type char: byte
+type Char = extern.char
+
+#typedef
+extern struct Vector2 {
+	x: f32
+	y: f32
+}
+
+type Vector2 = extern.Vector2
+
+#typedef
+extern struct Vector3 {
+	x: f32
+	y: f32
+	z: f32
+}
+
+type Vector3 = extern.Vector3
+
+#typedef
+extern struct Vector4 {
+	x: f32
+	y: f32
+	z: f32
+	w: f32
+}
+
+type Vector4 = extern.Vector4
+type Quaternion = Vector4
+
+#typedef
+extern struct Matrix {
+	m0:  f32
+	m4:  f32
+	m8:  f32
+	m12: f32
+
+	//
+	m1:  f32
+	m5:  f32
+	m9:  f32
+	m13: f32
+
+	m2:  f32
+	m6:  f32
+	m10: f32
+	m14: f32
+
+	m3:  f32
+	m7:  f32
+	m11: f32
+	m15: f32
+}
+
+type Matrix = extern.Matrix
+
+#typedef
+extern struct Color {
+	r: u8
+	b: u8
+	g: u8
+	a: u8
+}
+
+type Color = extern.Color
+
+#typedef
+extern struct Rectangle {
+	x:      u8
+	y:      u8
+	width:  u8
+	height: u8
+}
+
+type Rectangle = extern.Rectangle
+
+#typedef
+extern struct Image {
+	data:    *extern.char
+	width:   int
+	height:  int
+	mipmaps: int
+	format:  int
+}
+
+type Image = extern.Image
+
+#typedef
+extern struct Texture {
+	id:      u32
+	width:   int
+	height:  int
+	mipmaps: int
+	format:  int
+}
+
+type Texture = extern.Texture
+type Texture2D = Texture
+type TextureCubemap = Texture
+
+#typedef
+extern struct RenderTexture {
+	id:      u32     // OpenGL framebuffer object id
+	texture: Texture // Color buffer attachment texture
+	depth:   Texture // Depth buffer attachment texture
+}
+
+type RenderTexture = extern.RenderTexture
+type RenderTexture2D = RenderTexture
+
+#typedef
+extern struct NPatchInfo {
+	source: Rectangle
+	left:   i32
+	top:    i32
+	right:  i32
+	bottom: i32
+	layout: i32
+}
+
+type NPatchInfo = extern.NPatchInfo
+
+#typedef
+extern struct GlyphInfo {
+	value:    i32   // Character value (Unicode)
+	offsetX:  i32   // Character offset X when drawing
+	offsetY:  i32   // Character offset Y when drawing
+	advanceX: i32   // Character advance position X
+	image:    Image // Character image data
+}
+
+type GlyphInfo = extern.GlyphInfo
+
+#typedef
+extern struct Font {
+	baseSize:     i32         // Base size (default chars height)
+	glyphCount:   i32         // Number of glyph characters
+	glyphPadding: i32         // Padding around the glyph characters
+	texture:      Texture2D   // Texture atlas containing the glyphs
+	recs:         []Rectangle // Rectangles in texture for the glyphs
+	glyphs:       []GlyphInfo // Glyphs info data
+}
+
+type Font = extern.Font
+
+#typedef
+extern struct Camera3D {
+	position:   Vector3 // Camera position
+	target:     Vector3 // Camera target it looks-at
+	up:         Vector3 // Camera up vector (rotation over its axis)
+	fovy:       f32     // Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic
+	projection: int     // Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
+}
+
+type Camera3D = extern.Camera3D
+type Camera = Camera3D
+
+#typedef
+extern struct Camera2D {
+	offset:   Vector2 // Camera offset (displacement from target)
+	target:   Vector2 // Camera target (rotation and zoom origin)
+	rotation: f32     // Camera rotation in degrees
+	zoom:     f32     // Camera zoom (scaling), should be 1.0f by default
+}
+
+type Camera2D = extern.Camera2D
+
+#typedef
+extern struct Mesh {
+	vertexCount:   i32 // Number of vertices stored in arrays
+	triangleCount: i32 // Number of triangles stored (indexed or not)
+
+	// Vertex attributes data
+	vertices:   []f32 // Vertex position (XYZ - 3 components per vertex) (shader-location = 0)
+	texcoords:  []f32 // Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1)
+	texcoords2: []f32 // Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5)
+	normals:    []f32 // Vertex normals (XYZ - 3 components per vertex) (shader-location = 2)
+	tangents:   []f32 // Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4)
+	colors:     []u8  // Vertex colors (RGBA - 4 components per vertex) (shader-location = 3)
+	indices:    []u8  // Vertex indices (in case vertex data comes indexed)
+
+	// Animation vertex data
+	animVertices: []f32    // Animated vertex positions (after bones transformations)
+	animNormals:  []f32    // Animated normals (after bones transformations)
+	boneIds:      []u8     // Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) (shader-location = 6)
+	boneWeights:  []f32    // Vertex bone weight, up to 4 bones influence by vertex (skinning) (shader-location = 7)
+	boneMatrices: []Matrix // Bones animated transformation matrices
+	boneCount:    i32      // Number of bones
+
+	// OpenGL identifiers
+	vaoId: u32   // OpenGL Vertex Array Object id
+	vboId: []u32 // OpenGL Vertex Buffer Objects id (default vertex data)
+}
+
+type Mesh = extern.Mesh
+
+#typedef
+extern struct Shader {
+	id:   u32
+	locs: []i32
+}
+
+type Shader = extern.Shader
+
+// MaterialMap
+#typedef
+extern struct MaterialMap {
+	texture: Texture2D // Material map texture
+	color:   Color     // Material map color
+	value:   f32       // Material map value
+}
+
+type MaterialMap = extern.MaterialMap
+
+#typedef
+extern struct Material {
+	shader: Shader       // Material shader
+	maps:   *MaterialMap // Material maps array (MAX_MATERIAL_MAPS)
+	params: [4]f32       // Material generic parameters (if required)
+}
+
+type Material = extern.Material
+
+#typedef
+extern struct Transform {
+	translation: Vector3    // Translation
+	rotation:    Quaternion // Rotation
+	scale:       Vector3    // Scale
+}
+
+type Transform = extern.Transform
+
+// Bone, skeletal animation bone
+#typedef
+extern struct BoneInfo {
+	name:   [32]extern.char // Bone name
+	parent: i32          // Bone parent
+}
+
+type BoneInfo = extern.BoneInfo
+
+// Model, meshes, materials and animation data
+#typedef
+extern struct Model {
+	transform: Matrix // Local transform matrix
+
+	meshCount:     i32       // Number of meshes
+	materialCount: i32       // Number of materials
+	meshes:        *Mesh     // Meshes array
+	materials:     *Material // Materials array
+	meshMaterial:  *i32      // Mesh material number
+
+	// Animation data
+	boneCount: i32        // Number of bones
+	bones:     *BoneInfo  // Bones information (skeleton)
+	bindPose:  *Transform // Bones base transformation (pose)
+}
+
+type Model = extern.Model
+
+// ModelAnimation
+#typedef
+extern struct ModelAnimation {
+	boneCount:  i32          // Number of bones
+	frameCount: i32          // Number of animation frames
+	bones:      *BoneInfo    // Bones information (skeleton)
+	framePoses: **Transform  // Poses array by frame
+	name:       [32]extern.char // Animation name
+}
+
+type ModelAnimation = extern.ModelAnimation
+
+// Ray, ray for raycasting
+#typedef
+extern struct Ray {
+	position:  Vector3 // Ray position (origin)
+	direction: Vector3 // Ray direction (normalized)
+}
+
+type Ray = extern.Ray
+
+// RayCollision, ray hit information
+#typedef
+extern struct RayCollision {
+	hit:      bool    // Did the ray hit something?
+	distance: f32     // Distance to the nearest hit
+	point:    Vector3 // Point of the nearest hit
+	normal:   Vector3 // Surface normal of hit
+}
+
+type RayCollision = extern.RayCollision
+
+// BoundingBox
+#typedef
+extern struct BoundingBox {
+	min: Vector3 // Minimum vertex box-corner
+	max: Vector3 // Maximum vertex box-corner
+}
+
+type BoundingBox = extern.BoundingBox
+
+// Wave, audio wave data
+#typedef
+extern struct Wave {
+	frameCount: u32  // Total number of frames (considering channels)
+	sampleRate: u32  // Frequency (samples per second)
+	sampleSize: u32  // Bit depth (bits per sample): 8, 16, 32 (24 not supported)
+	channels:   u32  // Number of channels (1-mono, 2-stereo, ...)
+	data:       *any // Buffer data pointer
+}
+
+type Wave = extern.Wave
+
+//// Opaque structs declaration
+//// NOTE: Actual structs are defined internally in raudio module
+//typedef struct rAudioBuffer rAudioBuffer;
+//typedef struct rAudioProcessor rAudioProcessor;
+//
+//// AudioStream, custom audio stream
+//typedef struct AudioStream {
+//    rAudioBuffer *buffer;       // Pointer to internal data used by the audio system
+//    rAudioProcessor *processor; // Pointer to internal data processor, useful for audio effects
+//
+//    unsigned int sampleRate;    // Frequency (samples per second)
+//    unsigned int sampleSize;    // Bit depth (bits per sample): 8, 16, 32 (24 not supported)
+//    unsigned int channels;      // Number of channels (1-mono, 2-stereo, ...)
+//} AudioStream;
+//
+//// Sound
+//typedef struct Sound {
+//    AudioStream stream;         // Audio stream
+//    unsigned int frameCount;    // Total number of frames (considering channels)
+//} Sound;
+//
+//// Music, audio stream, anything longer than ~10 seconds should be streamed
+//typedef struct Music {
+//    AudioStream stream;         // Audio stream
+//    unsigned int frameCount;    // Total number of frames (considering channels)
+//    bool looping;               // Music looping enable
+//
+//    int ctxType;                // Type of music context (audio filetype)
+//    void *ctxData;              // Audio context data, depends on type
+//} Music;
+
+#typedef
+extern struct VrStereoConfig {
+	projection:        [2]Matrix // VR projection matrices (per eye)
+	viewOffset:        [2]Matrix // VR view offset matrices (per eye)
+	leftLensCenter:    [2]f32    // VR left lens center
+	rightLensCenter:   [2]f32    // VR right lens center
+	leftScreenCenter:  [2]f32    // VR left screen center
+	rightScreenCenter: [2]f32    // VR right screen center
+	scale:             [2]f32    // VR distortion scale
+	scaleIn:           [2]f32    // VR distortion scale in
+}
+
+type VrStereoConfig = extern.VrStereoConfig
+
+// VrDeviceInfo, Head-Mounted-Display device parameters
+#typedef
+extern struct VrDeviceInfo {
+	hResolution:            i32    // Horizontal resolution in pixels
+	vResolution:            i32    // Vertical resolution in pixels
+	hScreenSize:            f32    // Horizontal size in meters
+	vScreenSize:            f32    // Vertical size in meters
+	eyeToScreenDistance:    f32    // Distance between eye and display in meters
+	lensSeparationDistance: f32    // Lens separation distance in meters
+	interpupillaryDistance: f32    // IPD (distance between pupils) in meters
+	lensDistortionValues:   [4]f32 // Lens distortion constant parameters
+	chromaAbCorrection:     [4]f32 // Chromatic aberration correction parameters
+}
+
+type VrDeviceInfo = extern.VrDeviceInfo
+
+// File path list
+#typedef
+extern struct FilePathList {
+	capacity: u32        // Filepaths max entries
+	count:    u32        // Filepaths entries count
+	paths:    **extern.char // Filepaths entries
+}
+
+type FilePathList = extern.FilePathList
+
+// Automation event
+#typedef
+extern struct AutomationEvent {
+	frame: u32 // Event frame
+
+	//TODO: origin name of this field is type
+	_type:  u32    // Event type AutomationEventType
+	params: [4]i32 // Event parameters if required
+}
+
+type AutomationEvent = extern.AutomationEvent
+
+// Automation event list
+#typedef
+extern struct AutomationEventList {
+	capacity: u32              // Events max entries MAX_AUTOMATION_EVENTS
+	count:    u32              // Events entries count
+	events:   *AutomationEvent // Events entries
+}
+
+type AutomationEventList = extern.AutomationEventList
+
+extern type Void: uintptr
+type Void = extern.Void
+
+extern fn ConvertBytesToVoidPtr(bytes: *extern.char, size: int): Void
+fn ConvertBytesToVoidPtr(bytes: *extern.char): Void {
+	let size = unsafe { getLenCppChar(bytes) }
+	ret unsafe { extern.ConvertBytesToVoidPtr(bytes, size) }
+}
