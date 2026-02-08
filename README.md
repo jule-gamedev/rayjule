@@ -39,3 +39,14 @@ fn main() {
 }
 ```
 Then just do `julec build .` and it should run.
+
+## Examples
+You can find more examples in the [examples](https://github.com/SabeDoesThings/rayjule/tree/main/examples) folder.
+
+Examples Todo:
+- [ ] sprite_animation
+- [ ] background_scrolling
+- [ ] 2d_camera
+- [ ] 2d_camera_platformer
+- [ ] 3d_camera_first_person
+- [ ] 3d_camera_fps
