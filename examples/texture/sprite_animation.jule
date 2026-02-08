@@ -1,0 +1,73 @@
+use rl "rayjule_example/rayjule"
+
+const MAX_FRAME_SPEED = 15
+const MIN_FRAME_SPEED = 1
+
+fn main() {
+   const screenWidth = 800
+   const screenHeight = 450
+
+   rl::InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite animation")
+
+   let scarfy = rl::LoadTexture("resources/scarfy.png")
+
+   let mut position = rl::Vector2{350.0, 280.0}
+   let mut frameRec = rl::Rectangle{0.0, 0.0, f32(scarfy.width) / 6, f32(scarfy.height)}
+   let mut currentFrame = 0
+
+   let mut framesCounter = 0
+   let mut framesSpeed = 8
+
+   rl::SetTargetFPS(60)
+
+   for !rl::WindowShouldClose() {
+      framesCounter++
+
+      if framesCounter >= (60 / framesSpeed) {
+         framesCounter = 0
+         currentFrame++
+
+         if currentFrame > 5 {currentFrame = 0}
+
+         frameRec.x = f32(currentFrame) * f32(scarfy.width) / 6
+      }
+
+      if rl::IsKeyPressed(rl::KeyboardKey.KEY_RIGHT) {
+         framesSpeed++
+      } else if rl::IsKeyPressed(rl::KeyboardKey.KEY_LEFT) {
+         framesSpeed--
+      }
+
+      if framesSpeed > MAX_FRAME_SPEED {
+         framesSpeed = MAX_FRAME_SPEED
+      } else if framesSpeed < MIN_FRAME_SPEED {
+         framesSpeed = MIN_FRAME_SPEED
+      }
+
+      rl::BeginDrawing()
+         rl::ClearBackground(rl::RAYWHITE)
+
+         rl::DrawTexture(scarfy, 15, 40, rl::WHITE)
+         rl::DrawRectangleLines(15, 40, scarfy.width, scarfy.height, rl::LIME)
+         rl::DrawRectangleLines(15 + int(frameRec.x), 40 + int(frameRec.y), int(frameRec.width), int(frameRec.height), rl::RED)
+
+         rl::DrawText("FRAME SPEED: ", 165, 210, 10, rl::DARKGRAY)
+         rl::DrawText(rl::TextFormat("%02i FPS", framesSpeed), 575, 210, 10, rl::DARKGRAY)
+         rl::DrawText("PRESS RIGHT/LEFT KEYS to CHANGE SPEED!", 290, 240, 10, rl::DARKGRAY)
+
+         let mut i = 1
+         for i < MAX_FRAME_SPEED; i++ {
+            if i < framesSpeed {rl::DrawRectangle(250 + 21 * i, 205, 20, 20, rl::RED)}
+            rl::DrawRectangleLines(250 + 21 * i, 205, 20, 20, rl::MAROON)
+         }
+
+         rl::DrawTextureRec(scarfy, frameRec, position, rl::WHITE)  // Draw part of the texture
+
+         rl::DrawText("(c) Scarfy sprite by Eiden Marsal", screenWidth - 200, screenHeight - 20, 10, rl::GRAY)
+      rl::EndDrawing()
+   }
+
+   rl::UnloadTexture(scarfy)
+
+   rl::CloseWindow()
+}

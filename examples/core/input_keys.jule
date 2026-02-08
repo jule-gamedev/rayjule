@@ -1,0 +1,27 @@
+use rl "rayjule_example/rayjule"
+
+fn main() {
+   const screenWidth = 800
+   const screenHeight = 450
+
+   rl::InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys")
+
+   let mut ballPosition = rl::Vector2{f32(screenWidth) / 2, f32(screenHeight) / 2}
+
+   rl::SetTargetFPS(60)
+
+   for !rl::WindowShouldClose() {
+      if rl::IsKeyDown(rl::KeyboardKey.KEY_RIGHT) {ballPosition.x += 2.0}
+      if rl::IsKeyDown(rl::KeyboardKey.KEY_LEFT) {ballPosition.x -= 2.0}
+      if rl::IsKeyDown(rl::KeyboardKey.KEY_UP) {ballPosition.y -= 2.0}
+      if rl::IsKeyDown(rl::KeyboardKey.KEY_DOWN) {ballPosition.y += 2.0}
+
+      rl::BeginDrawing()
+         rl::ClearBackground(rl::RAYWHITE)
+         rl::DrawText("move the ball with arrow keys", 10, 10, 20, rl::LIGHTGRAY);
+         rl::DrawCircleV(ballPosition, 50, rl::MAROON)
+      rl::EndDrawing()
+   }
+
+   rl::CloseWindow()
+}
