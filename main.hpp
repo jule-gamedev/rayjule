@@ -9,7 +9,9 @@
 #define NOGDI
 #define NOUSER
 #include <vector>
+#ifdef _WIN32
 #include <shellapi.h>
+#endif
 #include "raylib.h"
 #include "raymath.h"
 #include "rlgl.h"
