@@ -1,4 +1,4 @@
-use rl "sprite_animation/rayjule"
+use rl "rayjule_example/rayjule"
 
 const MAX_FRAME_SPEED = 15
 const MIN_FRAME_SPEED = 1
@@ -70,5 +70,4 @@ fn main() {
    rl::UnloadTexture(scarfy)
 
    rl::CloseWindow()
-
 }

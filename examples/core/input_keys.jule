@@ -1,4 +1,4 @@
-use rl "input_keys/rayjule"
+use rl "rayjule_example/rayjule"
 
 fn main() {
    const screenWidth = 800
@@ -24,5 +24,4 @@ fn main() {
    }
 
    rl::CloseWindow()
-
 }

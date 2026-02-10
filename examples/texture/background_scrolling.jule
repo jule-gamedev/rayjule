@@ -1,0 +1,50 @@
+use rl "background_scrolling/rayjule"
+
+fn main() {
+   const screenWidth = 800
+   const screenHeight = 450
+
+   rl::InitWindow(screenWidth, screenHeight, "raylib [textures] example - background scrolling")
+
+   let background = rl::LoadTexture("resources/cyberpunk_street_background.png")
+   let midground = rl::LoadTexture("resources/cyberpunk_street_midground.png")
+   let foreground = rl::LoadTexture("resources/cyberpunk_street_foreground.png")
+
+   let mut scrollingBack: f32 = 0.0
+   let mut scrollingMid: f32 = 0.0
+   let mut scrollingFore: f32 = 0.0
+
+   rl::SetTargetFPS(60)
+
+   for !rl::WindowShouldClose() {
+      scrollingBack -= 0.1
+      scrollingMid -= 0.5
+      scrollingFore -= 1.0
+
+      if scrollingBack <= -f32(background.width) * 2 {scrollingBack = 0}
+      if scrollingMid <= -f32(midground.width) * 2 {scrollingMid = 0}
+      if scrollingFore <= -f32(foreground.width) * 2 {scrollingFore = 0}
+
+      rl::BeginDrawing()
+         rl::ClearBackground(rl::GetColor(0x052c46ff))
+
+         rl::DrawTextureEx(background, rl::Vector2{scrollingBack, 20}, 0.0, 2.0, rl::WHITE)
+         rl::DrawTextureEx(background, rl::Vector2{f32(background.width) * 2 + scrollingBack, 20}, 0.0, 2.0, rl::WHITE)
+
+         rl::DrawTextureEx(midground, rl::Vector2{scrollingMid, 20}, 0.0, 2.0, rl::WHITE)
+         rl::DrawTextureEx(midground, rl::Vector2{f32(midground.width) * 2 + scrollingMid, 20}, 0.0, 2.0, rl::WHITE)
+
+         rl::DrawTextureEx(foreground, rl::Vector2{scrollingFore, 70}, 0.0, 2.0, rl::WHITE)
+         rl::DrawTextureEx(foreground, rl::Vector2{f32(foreground.width) * 2 + scrollingFore, 70}, 0.0, 2.0, rl::WHITE)
+
+         rl::DrawText("BACKGROUND SCROLLING & PARALLAX", 10, 10, 20, rl::RED)
+         rl::DrawText("(c) Cyberpunk Street Environment by Luis Zuno (@ansimuz)", screenWidth - 330, screenHeight - 20, 10, rl::RAYWHITE)
+      rl::EndDrawing()
+   }
+
+   rl::UnloadTexture(background)
+   rl::UnloadTexture(midground)
+   rl::UnloadTexture(foreground)
+
+   rl::CloseWindow()
+}
