@@ -10,10 +10,9 @@
 #pass "-lwinmm"
 #pass "-lshell32"
 #pass "-luser32"
-#pass "-Wl,/NODEFAULTLIB:libucrt"      // Exclude static UCRT
-#pass "-Wl,/NODEFAULTLIB:libvcruntime" // Exclude static VC runtime
-#pass "-Wl,/NODEFAULTLIB:libcmt"       // Exclude static C runtime
-#pass "-lucrt"          // Use dynamic UCRT import library
-#pass "-lvcruntime"     // Use dynamic VC runtime import library
-
-#pass "-lmsvcrt"        // Use dynamic C runtime import library
+#pass "-Wl,/NODEFAULTLIB:libucrt"
+#pass "-Wl,/NODEFAULTLIB:libvcruntime"
+#pass "-Wl,/NODEFAULTLIB:libcmt"
+#pass "-lucrt"
+#pass "-lvcruntime"
+#pass "-lmsvcrt"
