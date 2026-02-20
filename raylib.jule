@@ -836,10 +836,6 @@ fn ConvertBytesToVoidPtr(bytes: *extern.char): Void {
 	ret unsafe { extern.ConvertBytesToVoidPtr(bytes, size) }
 }
 
-unsafe fn strToCharPtr(s: str): *extern.char {
-	ret (*extern.char)(&integ::BytesFromStr(s)[0])
-}
-
 unsafe fn ptrCharToStr(c: *extern.char): str {
 	if c == nil {
 		ret ""
@@ -1039,7 +1035,7 @@ fn SetWindowIcons(images: []Image, count: int) {
 // RLAPI void SetWindowTitle(const char *title);                     // Set title for window
 extern unsafe fn SetWindowTitle(images: *extern.char)
 fn SetWindowTitle(title: str) {
-	unsafe { extern.SetWindowTitle(strToCharPtr(title)) }
+	unsafe { extern.SetWindowTitle((*extern.char)(&integ::BytesFromStr(title)[0])) }
 }
 
 //RLAPI void SetWindowPosition(int x, int y);                       // Set window position on screen
@@ -1186,7 +1182,7 @@ fn GetMonitorName(monitor: int): str {
 // RLAPI void SetClipboardText(const char *text);                    // Set clipboard text content
 extern unsafe fn SetClipboardText(text: *extern.char)
 fn SetClipboardText(text: str) {
-	unsafe { extern.SetClipboardText(strToCharPtr(text)) }
+	unsafe { extern.SetClipboardText((*extern.char)(&integ::BytesFromStr(text)[0])) }
 }
 
 // RLAPI const char *GetClipboardText(void);                         // Get clipboard text content
@@ -1389,7 +1385,7 @@ fn UnloadRandomSequence(sequence: []i32) {
 // RLAPI void TakeScreenshot(const char *fileName)                  // Takes a screenshot of current screen (filename extension defines format)
 extern unsafe fn TakeScreenshot(fileName: *extern.char)
 fn TakeScreenshot(fileName: str) {
-	unsafe { extern.TakeScreenshot(strToCharPtr(fileName)) }
+	unsafe { extern.TakeScreenshot((*extern.char)(&integ::BytesFromStr(fileName)[0])) }
 }
 
 // RLAPI void SetConfigFlags(unsigned int flags)                    // Setup init configuration flags (view FLAGS)
@@ -1401,7 +1397,7 @@ fn SetConfigFlags(flags: u32) {
 // RLAPI void OpenURL(const char *url)                              // Open URL with default system browser (if available)
 extern unsafe fn OpenURL(url: *extern.char)
 fn OpenURL(url: str) {
-	unsafe { extern.OpenURL(strToCharPtr(url)) }
+	unsafe { extern.OpenURL((*extern.char)(&integ::BytesFromStr(url)[0])) }
 }
 
 // NOTE: Following functions implemented in module [utils]
@@ -1412,9 +1408,9 @@ fn TraceLog(logLevel: i32, text: str, info: ...str) {
 	unsafe {
 		let mut arr = make([]*extern.char, 0, len(info))
 		for i in info {
-			arr = append(arr, strToCharPtr(info[i]))
+			arr = append(arr, (*extern.char)(&integ::BytesFromStr(info[i])[0]))
 		}
-		extern.TraceLog(logLevel, strToCharPtr(text), arr...)
+		extern.TraceLog(logLevel, (*extern.char)(&integ::BytesFromStr(text)[0]), arr...)
 	}
 }
 
@@ -1490,13 +1486,13 @@ fn UnloadFileData(data: []u8) {
 // RLAPI bool SaveFileData(const char *fileName, void *data, int dataSize) // Save data to file from byte array (write), returns true on success
 extern unsafe fn SaveFileData(fileName: *extern.char, data: *any, dataSize: i32): bool
 fn SaveFileData(fileName: str, data: *any, dataSize: i32): bool {
-	ret unsafe { extern.SaveFileData(strToCharPtr(fileName), &data[0], dataSize) }
+	ret unsafe { extern.SaveFileData((*extern.char)(&integ::BytesFromStr(fileName)[0]), &data[0], dataSize) }
 }
 
 // RLAPI bool ExportDataAsCode(const unsigned char *data, int dataSize, const char *fileName) // Export data to code (.h), returns true on success
 extern unsafe fn ExportDataAsCode(data: *u8, dataSize: i32, fileName: *extern.char): bool
 fn ExportDataAsCode(data: []u8, dataSize: i32, fileName: str): bool {
-	ret unsafe { extern.ExportDataAsCode(&data[0], dataSize, strToCharPtr(fileName)) }
+	ret unsafe { extern.ExportDataAsCode(&data[0], dataSize, (*extern.char)(&integ::BytesFromStr(fileName)[0])) }
 }
 
 // RLAPI char *LoadFileText(const char *fileName)                   // Load text data from file (read), returns a '\0' terminated string
@@ -1509,13 +1505,13 @@ fn LoadFileText(fileName: *extern.char): str {
 // RLAPI void UnloadFileText(char *text)                            // Unload file text data allocated by LoadFileText()
 extern unsafe fn UnloadFileText(text: *extern.char)
 fn UnloadFileText(text: str) {
-	unsafe { extern.UnloadFileText(strToCharPtr(text)) }
+	unsafe { extern.UnloadFileText((*extern.char)(&integ::BytesFromStr(text)[0])) }
 }
 
 // RLAPI bool SaveFileText(const char *fileName, char *text)        // Save text data to file (write), string must be '\0' terminated, returns true on success
 extern unsafe fn SaveFileText(fileName: *extern.char, text: *extern.char): bool
 fn SaveFileText(fileName: str, text: str): bool {
-	ret unsafe { extern.SaveFileText(strToCharPtr(fileName), strToCharPtr(text)) }
+	ret unsafe { extern.SaveFileText((*extern.char)(&integ::BytesFromStr(fileName)[0]), (*extern.char)(&integ::BytesFromStr(text)[0])) }
 }
 
 // Input-related functions: keyboard
@@ -1627,7 +1623,7 @@ fn GetGamepadAxisMovement(gamepad: int, axis: int): f32 {
 // RLAPI int SetGamepadMappings(const char *mappings);                                // Set internal gamepad mappings (SDL_GameControllerDB)
 extern unsafe fn SetGamepadMappings(mappings: *extern.char): int
 fn SetGamepadMappings(mappings: str): int {
-	ret unsafe { extern.SetGamepadMappings(strToCharPtr(mappings)) }
+	ret unsafe { extern.SetGamepadMappings((*extern.char)(&integ::BytesFromStr(mappings)[0])) }
 }
 
 // RLAPI void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float duration); // Set gamepad vibration for both motors (duration in seconds)
@@ -1845,13 +1841,13 @@ fn EndVrStereoMode() {
 // RLAPI Shader LoadShader(const char *vsFileName, const char *fsFileName);   // Load shader from files and bind default locations
 extern unsafe fn LoadShader(vsFileName: *extern.char, fsFileName: *extern.char): Shader
 fn LoadShader(vsFileName: str, fsFileName: str): Shader {
-	ret unsafe { extern.LoadShader(strToCharPtr(vsFileName), strToCharPtr(fsFileName)) }
+	ret unsafe { extern.LoadShader((*extern.char)(&integ::BytesFromStr(vsFileName)[0]), (*extern.char)(&integ::BytesFromStr(fsFileName)[0])) }
 }
 
 // RLAPI Shader LoadShaderFromMemory(const char *vsCode, const char *fsCode); // Load shader from code strings and bind default locations
 extern unsafe fn LoadShaderFromMemory(vsCode: *extern.char, fsCode: *extern.char): Shader
 fn LoadShaderFromMemory(vsCode: str, fsCode: str): Shader {
-	ret unsafe { extern.LoadShaderFromMemory(strToCharPtr(vsCode), strToCharPtr(fsCode)) }
+	ret unsafe { extern.LoadShaderFromMemory((*extern.char)(&integ::BytesFromStr(vsCode)[0]), (*extern.char)(&integ::BytesFromStr(fsCode)[0])) }
 }
 
 // RLAPI bool IsShaderValid(Shader shader);                                   // Check if a shader is valid (loaded on GPU)
@@ -1863,13 +1859,13 @@ fn IsShaderValid(shader: Shader): bool {
 // RLAPI int GetShaderLocation(Shader shader, const char *uniformName);       // Get shader uniform location
 extern unsafe fn GetShaderLocation(shader: Shader, uniformName: *extern.char): i32
 fn GetShaderLocation(shader: Shader, uniformName: str): i32 {
-	ret unsafe { extern.GetShaderLocation(shader, strToCharPtr(uniformName)) }
+	ret unsafe { extern.GetShaderLocation(shader, (*extern.char)(&integ::BytesFromStr(uniformName)[0])) }
 }
 
 // RLAPI int GetShaderLocationAttrib(Shader shader, const char *attribName);  // Get shader attribute location
 extern unsafe fn GetShaderLocationAttrib(shader: Shader, attribName: *extern.char): i32
 fn GetShaderLocationAttrib(shader: Shader, attribName: str): i32 {
-	ret unsafe { extern.GetShaderLocationAttrib(shader, strToCharPtr(attribName)) }
+	ret unsafe { extern.GetShaderLocationAttrib(shader, (*extern.char)(&integ::BytesFromStr(attribName)[0])) }
 }
 
 //TODO: review later
@@ -2133,19 +2129,19 @@ fn DrawFPS(posX: i32, posY: i32) {
 // RLAPI void DrawText(const char *text, int posX, int posY, int fontSize, Color color);       // Draw text (using default font)
 extern unsafe fn DrawText(text: *extern.char, posX: int, posY: int, fontSize: i32, color: Color)
 fn DrawText(text: str, posX: int, posY: int, fontSize: i32, color: Color) {
-	unsafe { extern.DrawText(strToCharPtr(text), posX, posY, fontSize, color) }
+	unsafe { extern.DrawText((*extern.char)(&integ::BytesFromStr(text)[0]), posX, posY, fontSize, color) }
 }
 
 // RLAPI void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text using font and additional parameters
 extern unsafe fn DrawTextEx(font: Font, text: *extern.char, position: Vector2, fontSize: f32, spacing: f32, tint: Color)
 fn DrawTextEx(font: Font, text: str, position: Vector2, fontSize: f32, spacing: f32, tint: Color) {
-	unsafe { extern.DrawTextEx(font, strToCharPtr(text), position, fontSize, spacing, tint) }
+	unsafe { extern.DrawTextEx(font, (*extern.char)(&integ::BytesFromStr(text)[0]), position, fontSize, spacing, tint) }
 }
 
 // RLAPI void DrawTextPro(Font font, const char *text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
 extern unsafe fn DrawTextPro(font: Font, text: *extern.char, position: Vector2, origin: Vector2, rotation: f32, fontSize: f32, spacing: f32, tint: Color)
 fn DrawTextPro(font: Font, text: str, position: Vector2, origin: Vector2, rotation: f32, fontSize: f32, spacing: f32, tint: Color) {
-	unsafe { extern.DrawTextPro(font, strToCharPtr(text), position, origin, rotation, fontSize, spacing, tint) }
+	unsafe { extern.DrawTextPro(font, (*extern.char)(&integ::BytesFromStr(text)[0]), position, origin, rotation, fontSize, spacing, tint) }
 }
 
 // RLAPI void DrawTextCodepoint(Font font, int codepoint, Vector2 position, float fontSize, Color tint); // Draw one character (codepoint)
@@ -2164,7 +2160,7 @@ fn DrawTextCodepoints(font: Font, codepoints: []i32, codepointCount: i32, positi
 extern unsafe fn TextFormat(text: *extern.char, info: ...int): str
 fn TextFormat(text: str, info: ...int): str {
 	unsafe {
-		ret extern.TextFormat(strToCharPtr(text), info...)
+		ret extern.TextFormat((*extern.char)(&integ::BytesFromStr(text)[0]), info...)
 	}
 }
 
@@ -2368,31 +2364,31 @@ fn GetCollisionRec(rec1: Rectangle, rec2: Rectangle): Rectangle {
 //RLAPI Image LoadImage(const char *fileName);                                                             // Load image from file into CPU memory (RAM)
 extern unsafe fn LoadImage(path: *extern.char): Image
 fn LoadImage(path: str): Image {
-	ret unsafe { extern.LoadImage(strToCharPtr(path)) }
+	ret unsafe { extern.LoadImage((*extern.char)(&integ::BytesFromStr(path)[0])) }
 }
 
 //RLAPI Image LoadImageRaw(const char *fileName, int width, int height, int format, int headerSize);       // Load image from RAW file data
 extern unsafe fn LoadImageRaw(fileName: *extern.char, width: i32, height: i32, format: i32, headerSize: i32): Image
 fn LoadImageRaw(fileName: str, width: i32, height: i32, format: i32, headerSize: i32): Image {
-	ret unsafe { extern.LoadImageRaw(strToCharPtr(fileName), width, height, format, headerSize) }
+	ret unsafe { extern.LoadImageRaw((*extern.char)(&integ::BytesFromStr(fileName)[0]), width, height, format, headerSize) }
 }
 
 //RLAPI Image LoadImageAnim(const char *fileName, int *frames);                                            // Load image sequence from file (frames appended to image.data)
 extern unsafe fn LoadImageAnim(fileName: *extern.char, frames: *i32): Image
 fn LoadImageAnim(fileName: str, frames: *i32): Image {
-	ret unsafe { extern.LoadImageAnim(strToCharPtr(fileName), frames) }
+	ret unsafe { extern.LoadImageAnim((*extern.char)(&integ::BytesFromStr(fileName)[0]), frames) }
 }
 
 //RLAPI Image LoadImageAnimFromMemory(const char *fileType, const unsigned char *fileData, int dataSize, int *frames); // Load image sequence from memory buffer
 extern unsafe fn LoadImageAnimFromMemory(fileType: *extern.char, fileData: *byte, dataSize: i32, frames: *i32): Image
 fn LoadImageAnimFromMemory(fileType: str, fileData: []byte, dataSize: i32, frames: []i32): Image {
-	ret unsafe { extern.LoadImageAnimFromMemory(strToCharPtr(fileType), &fileData[0], dataSize, &frames[0]) }
+	ret unsafe { extern.LoadImageAnimFromMemory((*extern.char)(&integ::BytesFromStr(fileType)[0]), &fileData[0], dataSize, &frames[0]) }
 }
 
 //RLAPI Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, int dataSize);      // Load image from memory buffer, fileType refers to extension: i.e. '.png'
 extern unsafe fn LoadImageFromMemory(fileType: *extern.char, fileData: *byte, dataSize: i32): Image
 fn LoadImageFromMemory(fileType: str, fileData: []byte, dataSize: i32): Image {
-	ret unsafe { extern.LoadImageFromMemory(strToCharPtr(fileType), &fileData[0], dataSize) }
+	ret unsafe { extern.LoadImageFromMemory((*extern.char)(&integ::BytesFromStr(fileType)[0]), &fileData[0], dataSize) }
 }
 
 //RLAPI Image LoadImageFromTexture(Texture2D texture);                                                     // Load image from GPU texture data
@@ -2422,7 +2418,7 @@ fn UnloadImage(image: Image) {
 //RLAPI bool ExportImage(Image image, const char *fileName);                                               // Export image data to file, returns true on success
 extern unsafe fn ExportImage(image: Image, fileName: *extern.char): bool
 fn ExportImage(image: Image, fileName: str): bool {
-	ret unsafe { extern.ExportImage(image, strToCharPtr(fileName)) }
+	ret unsafe { extern.ExportImage(image, (*extern.char)(&integ::BytesFromStr(fileName)[0])) }
 }
 
 //RLAPI unsigned char *ExportImageToMemory(Image image, const char *fileType, int *fileSize);              // Export image to memory buffer
@@ -2491,7 +2487,7 @@ fn GenImageCellular(width: i32, height: i32, tileSize: i32): Image {
 // RLAPI Image GenImageText(int width, int height, const char *text);                                       // Generate image: grayscale image from text data
 extern unsafe fn GenImageText(width: i32, height: i32, text: *extern.char): Image
 fn GenImageText(width: i32, height: i32, text: str): Image {
-	ret unsafe { extern.GenImageText(width, height, strToCharPtr(text)) }
+	ret unsafe { extern.GenImageText(width, height, (*extern.char)(&integ::BytesFromStr(text)[0])) }
 }
 
 //***********************************************************************************
@@ -2517,13 +2513,13 @@ fn ImageFromChannel(image: Image, selectedChannel: i32): Image {
 // RLAPI Image ImageText(const char *text, int fontSize, Color color);                                      // Create an image from text (default font)
 extern unsafe fn ImageText(text: *extern.char, fontSize: i32, color: Color): Image
 fn ImageText(text: str, fontSize: i32, color: Color): Image {
-	ret unsafe { extern.ImageText(strToCharPtr(text), fontSize, color) }
+	ret unsafe { extern.ImageText((*extern.char)(&integ::BytesFromStr(text)[0]), fontSize, color) }
 }
 
 // RLAPI Image ImageTextEx(Font font, const char *text, float fontSize, float spacing, Color tint);         // Create an image from text (custom sprite font)
 extern unsafe fn ImageTextEx(font: Font, text: *extern.char, fontSize: f32, spacing: f32, tint: Color): Image
 fn ImageTextEx(font: Font, text: str, fontSize: f32, spacing: f32, tint: Color): Image {
-	ret unsafe { extern.ImageTextEx(font, strToCharPtr(text), fontSize, spacing, tint) }
+	ret unsafe { extern.ImageTextEx(font, (*extern.char)(&integ::BytesFromStr(text)[0]), fontSize, spacing, tint) }
 }
 
 // RLAPI void ImageFormat(Image *image, int newFormat);                                                     // Convert image data to desired format
@@ -2839,13 +2835,13 @@ fn ImageDraw(dst: *Image, src: Image, srcRec: Rectangle, dstRec: Rectangle, tint
 // RLAPI void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSize, Color color);   // Draw text (using default font) within an image (destination)
 extern unsafe fn ImageDrawText(dst: *Image, text: *extern.char, posX: i32, posY: i32, fontSize: i32, color: Color)
 fn ImageDrawText(dst: *Image, text: str, posX: i32, posY: i32, fontSize: i32, color: Color) {
-	unsafe { extern.ImageDrawText(dst, strToCharPtr(text), posX, posY, fontSize, color) }
+	unsafe { extern.ImageDrawText(dst, (*extern.char)(&integ::BytesFromStr(text)[0]), posX, posY, fontSize, color) }
 }
 
 // RLAPI void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text (custom sprite font) within an image (destination)
 extern unsafe fn ImageDrawTextEx(dst: *Image, font: Font, text: *extern.char, position: Vector2, fontSize: f32, spacing: f32, tint: Color)
 fn ImageDrawTextEx(dst: *Image, font: Font, text: str, position: Vector2, fontSize: f32, spacing: f32, tint: Color) {
-	unsafe { extern.ImageDrawTextEx(dst, font, strToCharPtr(text), position, fontSize, spacing, tint) }
+	unsafe { extern.ImageDrawTextEx(dst, font, (*extern.char)(&integ::BytesFromStr(text)[0]), position, fontSize, spacing, tint) }
 }
 
 // Texture loading functions
@@ -2853,7 +2849,7 @@ fn ImageDrawTextEx(dst: *Image, font: Font, text: str, position: Vector2, fontSi
 // RLAPI Texture2D LoadTexture(const char *fileName);                                                       // Load texture from file into GPU memory (VRAM)
 extern unsafe fn LoadTexture(fileName: *extern.char): Texture2D
 fn LoadTexture(fileName: str): Texture2D {
-	ret unsafe { extern.LoadTexture(strToCharPtr(fileName)) }
+	ret unsafe { extern.LoadTexture((*extern.char)(&integ::BytesFromStr(fileName)[0])) }
 }
 
 // RLAPI Texture2D LoadTextureFromImage(Image image);                                                       // Load texture from image data
@@ -2975,7 +2971,7 @@ fn UnloadFont(font: Font) {
 // RLAPI Model LoadModel(const char *fileName);                                                // Load model from files (meshes and materials)
 extern unsafe fn LoadModel(fileName: *extern.char): Model
 fn LoadModel(fileName: str): Model {
-	ret unsafe { extern.LoadModel(strToCharPtr(fileName)) }
+	ret unsafe { extern.LoadModel((*extern.char)(&integ::BytesFromStr(fileName)[0])) }
 }
 
 // RLAPI Model LoadModelFromMesh(Mesh mesh);                                                   // Load model from generated mesh (default material)
@@ -3082,7 +3078,7 @@ fn CloseAudioDevice() {
 // RLAPI Sound LoadSound(const char *fileName);                          // Load sound from file
 extern unsafe fn LoadSound(fileName: *extern.char)
 fn LoadSound(fileName: str) {
-	unsafe { extern.LoadSound(strToCharPtr(fileName)) }
+	unsafe { extern.LoadSound((*extern.char)(&integ::BytesFromStr(fileName)[0])) }
 }
 
 // RLAPI void UnloadSound(Sound sound);                                  // Unload sound
@@ -3118,7 +3114,7 @@ fn SetSoundVolume(sound: Sound, volume: f32) {
 // RLAPI Music LoadMusicStream(const char *fileName);
 extern unsafe fn LoadMusicStream(fileName: *extern.char): Music
 fn LoadMusicStream(fileName: str): Music {
-	ret unsafe { extern.LoadMusicStream(strToCharPtr(fileName)) }
+	ret unsafe { extern.LoadMusicStream((*extern.char)(&integ::BytesFromStr(fileName)[0])) }
 }
 
 // RLAPI void UnloadMusicStream(Music music);
